@@ -1,9 +1,11 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
 import time
 import datetime
 import RPi.GPIO as GPIO
 import urllib
 import hashlib
+from random import randint
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
@@ -12,12 +14,12 @@ GPIO.setup(18, GPIO.OUT)  # Green
 GPIO.setup(27, GPIO.OUT)  # Yellow
 GPIO.setup(22, GPIO.OUT)  # Sound
 
-state = 0
+state = 1
 LastState = -1
 getready = 60
 curr = time.time()
-learningTime = 3000
-pauseTime = 600
+learningTime = randint(3000, 3600)
+pauseTime = randint(600, 1200)
 
 
 def ChangeState():
@@ -85,15 +87,17 @@ def Program():
     if state != LastState:
         LastState = state
         if state == 0:
-            print "[" + datetime.datetime.fromtimestamp(curr).strftime('%Y-%m-%d %H:%M:%S') + "] Tanulas in progress.."
+            learningTime = randint(3000, 3600)
+            print "[" + datetime.datetime.fromtimestamp(curr).strftime('%Y-%m-%d %H:%M:%S') + "] - "+str(learningTime/60)+" perc tanulás in progress.. "
         elif state == 1:
-            print "[" + datetime.datetime.fromtimestamp(curr).strftime('%Y-%m-%d %H:%M:%S') + "] Szunet in progress.."
+            pauseTime = randint(600, 1200)
+            print "[" + datetime.datetime.fromtimestamp(curr).strftime('%Y-%m-%d %H:%M:%S') + "] - "+str(pauseTime/60)+" perc szünet következik.. "
 
 
 try:
-    print "==== Tanulas koordinalo v1.0 ===="
+    print "==== Tanulás koordináló v1.1 ===="
     while True:
         Program()
 except KeyboardInterrupt:
     GPIO.cleanup()
-    print "\Megszakitva"
+    print "\nMegszakítva"
